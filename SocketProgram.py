@@ -4,11 +4,11 @@ HOST = "DRACO1"
 
 def get_port() -> int:
     """
-    Get the port number from the user.
+    Get the port number from the user. The port number must be between 0 and 65535. 0 will exit the program.
     """
     good_port = False
     while not good_port:
-        port = input("Enter the port number (0 to exit): ")
+        port = input(f"Enter the port number for host {HOST} (0 to exit): ")
         try:
             port = int(port)
             if 0 <= port <= 65535:
