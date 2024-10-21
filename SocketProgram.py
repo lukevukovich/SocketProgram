@@ -1,8 +1,13 @@
 import socket
+import sys
 
-HOST = "DRACO1"
+"""
+CMSM-3180-001
+Luke Vukovich, Adir Turgeman
+Socket Program
+"""
 
-def get_port() -> int:
+def get_port(HOST: str) -> int:
     """
     Get the port number from the user. The port number must be between 0 and 65535. 0 will exit the program.
     """
@@ -37,7 +42,7 @@ def get_client_input() -> str:
                 code = code_message[0]
                 message = code_message[1]
                 if code != "1" and code != "2":
-                    print("Invalid code\n")
+                    print("Invalid Code: Code must be: 1 (echo) or 2 (no echo)\n")
                 else:
                     if message == "":
                         print("Message cannot be blank\n")
@@ -45,7 +50,7 @@ def get_client_input() -> str:
                         good_input = True
                 
             except Exception:
-                print("Invalid Input: Must be in format: {code}#{message}\n")
+                print("Invalid Input: Input must be in format: {code}#{message}\n")
 
     return code, message
 
@@ -53,12 +58,19 @@ def main():
     """
     Main function to handle client-server communication. Client will connect and send messages to the server.
     """
+    # Get the host name from the command line argument, exit if missing
+    try:
+        HOST = sys.argv[1]
+    except IndexError:
+        print("Socket Program Error: Missing HOSTNAME command line argument")
+        sys.exit(1)
+
     # Create a socket object
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     print("Socket Created")
 
     # Get the port number
-    port = get_port()
+    port = get_port(HOST)
     if port == 0:
         print("Exit Program")
         return
@@ -66,6 +78,7 @@ def main():
     try:
         # Client connects to the server
         client_socket.connect((HOST, port))
+        print(f"Connected to {HOST} on port {port}")
 
         # Receive initial message from the server
         print(f"Server Output: {client_socket.recv(1024).decode()}")
@@ -85,15 +98,19 @@ def main():
             # Send message to server
             client_socket.sendall(message.encode())
             print(f"Message Received by Server")
+
+            # Receive message from server
+            echo = client_socket.recv(1024).decode()
             if code == "1":
                 # Echo message from server if code is 1
-                print(f"Server Output: {client_socket.recv(1024).decode()}\n")
+                print(f"Server Output: {echo}\n")
             else:
                 print("")
 
     except Exception as e:
         # Handle any errors that occur
         print(f"Socket Program Error: {e}")
+        sys.exit(1)
 
     finally:
         # close the connection
