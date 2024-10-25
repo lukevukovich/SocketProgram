@@ -4,7 +4,9 @@ import sys
 """
 CMSM-3180-001
 Luke Vukovich, Adir Turgeman
-Socket Program
+SocketProgram.py
+
+NOTE: 'hostname' parameter accepted as command line argument.
 """
 
 def get_port(HOST: str) -> int:
